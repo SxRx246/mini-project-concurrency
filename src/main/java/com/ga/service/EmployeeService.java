@@ -1,6 +1,6 @@
 package com.ga.service;
 
-import com.ga.exception.InvalidFieldsException;
+import com.ga.exception.AttributeNotFoundException;
 import com.ga.model.Employee;
 import com.ga.repository.EmployeeRepository;
 import jakarta.annotation.PostConstruct;
@@ -8,16 +8,17 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-public class CSVService {
+public class EmployeeService {
 
     private final EmployeeRepository repository;
     private final ConcurrentHashMap<Integer, Employee> employees = new ConcurrentHashMap<>();
 
-    public CSVService(EmployeeRepository repository) {
+    public EmployeeService(EmployeeRepository repository) {
         this.repository = repository;
     }
 
@@ -67,5 +68,20 @@ public class CSVService {
             }
         }
     }
+
+    public List<Employee> getAllEmployees() {
+        return new ArrayList<>(employees.values());
+    }
+
+    public Employee getEmployee(int id) {
+        Employee employee = employees.get(id);
+
+        if (employee == null) {
+            throw new AttributeNotFoundException("Employee not found.");
+        }
+
+        return employee;
+    }
+
 
 }

@@ -1,6 +1,6 @@
 //package com.ga;
 //
-//import com.ga.service.CSVService;
+//import com.ga.service.EmployeeService;
 //import com.ga.exception.InvalidFieldsException;
 //
 //import java.io.FileNotFoundException;
@@ -8,7 +8,7 @@
 //
 //public class Main {
 //    public static void main(String[] args) {
-////        CSVService csvProcessor = new CSVService();
+////        EmployeeService csvProcessor = new EmployeeService();
 //
 //        new Thread(() -> {
 //            try {
