@@ -1,3 +1,6 @@
+package com.ga;
+
+import com.ga.CSVProcessor;
 import com.ga.exception.InvalidFieldsException;
 
 import java.io.FileNotFoundException;
