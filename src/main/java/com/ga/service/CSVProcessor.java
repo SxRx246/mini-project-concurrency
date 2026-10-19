@@ -17,7 +17,7 @@ public class CSVProcessor {
     }
 
     public List<String> readEmployees() throws IOException {
-        List<String> employees = repository.findAll();
+        List<String> employees = repository.readCSV();
 
         for (int i = 0; i < employees.size(); i++) {
             String[] fields = employees.get(i).trim().split(",");
