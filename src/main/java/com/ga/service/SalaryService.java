@@ -12,6 +12,11 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Calculates employee salary increases based on role, years of service,
+ * and project completion. Uses concurrency tools to manage salary
+ * processing and track completed tasks.
+ */
 @Service
 public class SalaryService {
 
@@ -19,6 +24,13 @@ public class SalaryService {
     private final Semaphore semaphore = new Semaphore(2);
     private final AtomicInteger completedTasks = new AtomicInteger(0);
 
+    /**
+     * Calculates the salary increase for a single employee while
+     * holding a lock to prevent other threads from accessing the
+     * protected operation simultaneously.
+     *
+     * @param employee the employee whose salary will be updated
+     */
     public void updateSalary(Employee employee) {
         lock.lock();
 
@@ -29,6 +41,15 @@ public class SalaryService {
         }
     }
 
+    /**
+     * Calculates the employee's years of service, increase percentage,
+     * and new salary. Employees with project completion below 60%
+     * receive no increase. Eligible employees receive a role-based
+     * increase and an additional 2% for each completed year of service.
+     *
+     * @param employee the employee whose salary information is calculated
+     * @throws IllegalArgumentException if the employee has an unknown role
+     */
     private void calculateSalary(Employee employee) {
         long yearsWorked = ChronoUnit.YEARS.between(employee.getJoinedDate(), LocalDate.now());
 
@@ -67,6 +88,17 @@ public class SalaryService {
         );
     }
 
+    /**
+     * Calculates salary increases for all employees concurrently using
+     * a fixed thread pool. A semaphore limits the number of threads
+     * allowed to calculate salaries simultaneously, and an atomic
+     * counter tracks successfully completed tasks.
+     *
+     * @param employees the list of employees whose salaries will be updated
+     * @return the list of employees with updated salary information
+     * @throws InterruptedException if the current thread is interrupted
+     * @throws ExecutionException if a salary-processing task fails
+     */
     public List<Employee> updateAllSalaries(List<Employee> employees) throws InterruptedException, ExecutionException {
 
         lock.lock();
@@ -110,6 +142,12 @@ public class SalaryService {
             lock.unlock();
         }
     }
+
+    /**
+     * Retrieves the number of successfully completed salary-processing tasks.
+     *
+     * @return the number of completed tasks
+     */
     public int getCompletedTasks() {
         return completedTasks.get();
     }

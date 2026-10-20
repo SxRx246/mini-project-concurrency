@@ -6,6 +6,10 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
+/**
+ * Represents an employee and stores their personal information,
+ * employment details, and salary calculation results.
+ */
 @Getter
 @Setter
 @NoArgsConstructor

@@ -12,16 +12,35 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Manages employee data by loading records from a CSV file,
+ * validating employee information, and providing methods
+ * to retrieve and save employee records.
+ */
 @Service
 public class EmployeeService {
 
     private final EmployeeRepository repository;
     private final ConcurrentHashMap<Integer, Employee> employees = new ConcurrentHashMap<>();
 
+    /**
+     * Creates the employee service with the repository
+     * used to read and write employee CSV data.
+     *
+     * @param repository the repository responsible for CSV operations
+     */
     public EmployeeService(EmployeeRepository repository) {
         this.repository = repository;
     }
 
+    /**
+     * Loads employee records from the input CSV file when
+     * the service is initialized. Validates employee data
+     * and rejects invalid records and duplicate employee IDs.
+     *
+     * @throws IOException if the CSV file cannot be read or
+     *                     contains invalid data or duplicate IDs
+     */
     @PostConstruct
     public void loadEmployees() throws IOException {
         List<String> lines = repository.readCSV();
@@ -69,10 +88,23 @@ public class EmployeeService {
         }
     }
 
+    /**
+     * Retrieves all employees currently stored in the service.
+     *
+     * @return a list containing all loaded employees
+     */
     public List<Employee> getAllEmployees() {
         return new ArrayList<>(employees.values());
     }
 
+    /**
+     * Retrieves an employee using their unique ID.
+     *
+     * @param id the ID of the employee to retrieve
+     * @return the employee matching the specified ID
+     * @throws AttributeNotFoundException if no employee
+     *                                    exists with the given ID
+     */
     public Employee getEmployee(int id) {
         Employee employee = employees.get(id);
 
@@ -83,6 +115,13 @@ public class EmployeeService {
         return employee;
     }
 
+    /**
+     * Saves the currently loaded employee records to the
+     * output CSV file through the repository.
+     *
+     * @throws IOException if an error occurs while writing
+     *                     the employee records
+     */
     public void saveEmployees() throws IOException {
         repository.writeCSV(getAllEmployees());
     }
