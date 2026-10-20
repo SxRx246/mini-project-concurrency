@@ -6,12 +6,18 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 public class SalaryService {
 
     private final ReentrantLock lock = new ReentrantLock();
+    private final Semaphore semaphore = new Semaphore(2);
+    private final AtomicInteger completedTasks = new AtomicInteger(0);
 
     public void updateSalary(Employee employee) {
         lock.lock();
@@ -59,6 +65,53 @@ public class SalaryService {
 
         employee.setNewSalary(employee.getSalary() * (1 + increaseRate / 100)
         );
+    }
+
+    public List<Employee> updateAllSalaries(List<Employee> employees) throws InterruptedException, ExecutionException {
+
+        lock.lock();
+
+        ExecutorService executor = Executors.newFixedThreadPool(4);
+
+        try {
+            List<Future<?>> tasks = new ArrayList<>();
+
+            for (Employee employee : employees) {
+                tasks.add(executor.submit(() -> {
+                    boolean acquired = false;
+
+                    try {
+                        semaphore.acquire();
+                        acquired = true;
+
+                        calculateSalary(employee);
+                        completedTasks.incrementAndGet();
+
+                    } catch (InterruptedException exception) {
+                        Thread.currentThread().interrupt();
+                        throw new RuntimeException(exception);
+
+                    } finally {
+                        if (acquired) {
+                            semaphore.release();
+                        }
+                    }
+                }));
+            }
+
+            for (Future<?> task : tasks) {
+                task.get();
+            }
+
+            return employees;
+
+        } finally {
+            executor.shutdown();
+            lock.unlock();
+        }
+    }
+    public int getCompletedTasks() {
+        return completedTasks.get();
     }
 
 }
