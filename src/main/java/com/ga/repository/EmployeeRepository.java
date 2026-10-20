@@ -38,7 +38,7 @@ public class EmployeeRepository {
         try (BufferedWriter writer = Files.newBufferedWriter(Path.of("src/main/resources/output_employees.csv"), StandardCharsets.UTF_8)) {
 
             writer.write(
-                    "id,name,original_salary,joined_date,role,"
+                    "id,name,salary,joined_date,role,"
                             + "project_completion,years_worked,"
                             + "increase_percentage,new_salary"
             );
