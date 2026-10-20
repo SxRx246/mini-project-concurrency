@@ -27,7 +27,7 @@ public class EmployeeService {
         List<String> lines = repository.readCSV();
 
 
-        for (int i = 1; i < lines.size(); i++) {
+        for (int i = 0; i < lines.size(); i++) {
             if (lines.get(i).isBlank()) {
                 continue;
             }
