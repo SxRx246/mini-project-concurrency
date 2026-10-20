@@ -83,5 +83,9 @@ public class EmployeeService {
         return employee;
     }
 
+    public void saveEmployees() throws IOException {
+        repository.writeCSV(getAllEmployees());
+    }
+
 
 }
