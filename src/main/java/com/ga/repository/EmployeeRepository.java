@@ -35,7 +35,7 @@ public class EmployeeRepository {
     }
 
     public void writeCSV(List<Employee> employees) throws IOException {
-        try (BufferedWriter writer = Files.newBufferedWriter(Path.of("output_employees.csv"), StandardCharsets.UTF_8)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(Path.of("src/main/resources/output_employees.csv"), StandardCharsets.UTF_8)) {
 
             writer.write(
                     "id,name,original_salary,joined_date,role,"
